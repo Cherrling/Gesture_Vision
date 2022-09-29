@@ -119,6 +119,7 @@ def handpose_x_process(info_dict,config):
     cap.release()
     cv2.destroyAllWindows()
 
+
 def main_handpose_x(cfg_file):
     config = parse_data_cfg(cfg_file)
 
