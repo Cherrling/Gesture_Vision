@@ -5,15 +5,15 @@
 
 import os
 
-ROOT_DATASET = 'D:/BaiduNetdiskDownload/Gesture_data/test'  # '/data/jilin/'
+ROOT_DATASET = '/TSM/data'  # '/data/jilin/'
 
 
 def return_ucf101(modality):
-    filename_categories = 'D:/BaiduNetdiskDownload/Gesture_data/test/label/class.txt'
+    filename_categories = 'TSM/data/label/classInd.txt'
     if modality == 'RGB':
         root_data = ROOT_DATASET + '/img'
-        filename_imglist_train = 'D:/BaiduNetdiskDownload/Gesture_data/test/label/train.txt'
-        filename_imglist_val = 'D:/BaiduNetdiskDownload/Gesture_data/test/label/val.txt'
+        filename_imglist_train = 'TSM/data/label/train_split.txt'
+        filename_imglist_val = 'TSM/data/label/val_split.txt'
         prefix = 'image_{:05d}.jpg'
     elif modality == 'Flow':
         root_data = ROOT_DATASET + 'UCF101/jpg'

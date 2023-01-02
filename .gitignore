@@ -3,3 +3,5 @@
 21/handpose_weights/
 TSM/pretrained
 TSM/checkpoint
+checkpoint
+TSM/data

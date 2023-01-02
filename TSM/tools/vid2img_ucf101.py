@@ -38,8 +38,8 @@ def class_process(dir_path, dst_dir_path, class_name):
     print('\n')
 
 if __name__=="__main__":
-  dir_path = sys.argv[1]      # 视频文件总路径
-  dst_dir_path = sys.argv[2]   # 抽帧后图片存放路径
+  dir_path = r"TSM/data/vid"
+  dst_dir_path = r"TSM/data/img"
 
   for class_name in os.listdir(dir_path):
     class_process(dir_path, dst_dir_path, class_name)
