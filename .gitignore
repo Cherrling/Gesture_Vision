@@ -1,3 +1,5 @@
-hand_weights/
-gesture_weights/
-handpose_weights/
+21/hand_weights/
+21/gesture_weights/
+21/handpose_weights/
+TSM/pretrained
+TSM/checkpoint
