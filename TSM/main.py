@@ -93,11 +93,46 @@ def main():
         else:
             print(("=> no checkpoint found at '{}'".format(args.resume)))
 
+    # if args.tune_from:
+    #     print(("=> fine-tuning from '{}'".format(args.tune_from)))
+    #     sd = torch.load(args.tune_from)
+    #     sd = sd['state_dict']
+    #     model_dict = model.state_dict()
+    #     replace_dict = []
+    #     for k, v in sd.items():
+    #         if k not in model_dict and k.replace('.net', '') in model_dict:
+    #             print('=> Load after remove .net: ', k)
+    #             replace_dict.append((k, k.replace('.net', '')))
+    #     for k, v in model_dict.items():
+    #         if k not in sd and k.replace('.net', '') in sd:
+    #             print('=> Load after adding .net: ', k)
+    #             replace_dict.append((k.replace('.net', ''), k))
+
+    #     for k, k_new in replace_dict:
+    #         sd[k_new] = sd.pop(k)
+    #     keys1 = set(list(sd.keys()))
+    #     keys2 = set(list(model_dict.keys()))
+    #     set_diff = (keys1 - keys2) | (keys2 - keys1)
+    #     print('#### Notice: keys that failed to load: {}'.format(set_diff))
+    #     if args.dataset not in args.tune_from:  # new dataset
+    #         print('=> New dataset, do not load fc weights')
+    #         sd = {k: v for k, v in sd.items() if 'fc' not in k}
+    #     if args.modality == 'Flow' and 'Flow' not in args.tune_from:
+    #         sd = {k: v for k, v in sd.items() if 'conv1.weight' not in k}
+    #     model_dict.update(sd)
+    #     model.load_state_dict(model_dict)
+
+    # if args.temporal_pool and not args.resume:
+    #     make_temporal_pool(model.module.base_model, args.num_segments)
+
     if args.tune_from:
         print(("=> fine-tuning from '{}'".format(args.tune_from)))
         sd = torch.load(args.tune_from)
         sd = sd['state_dict']
-        model_dict = model.state_dict()
+        if args.arch == "mobilenetv2":
+            model_dict = model.module.state_dict()
+        else:
+            model_dict = model.state_dict()
         replace_dict = []
         for k, v in sd.items():
             if k not in model_dict and k.replace('.net', '') in model_dict:
@@ -112,15 +147,24 @@ def main():
             sd[k_new] = sd.pop(k)
         keys1 = set(list(sd.keys()))
         keys2 = set(list(model_dict.keys()))
+
         set_diff = (keys1 - keys2) | (keys2 - keys1)
+
         print('#### Notice: keys that failed to load: {}'.format(set_diff))
         if args.dataset not in args.tune_from:  # new dataset
             print('=> New dataset, do not load fc weights')
-            sd = {k: v for k, v in sd.items() if 'fc' not in k}
+            if args.arch == "mobilenetv2":
+                sd = {k: v for k, v in sd.items() if k in model.state_dict().keys() and model.state_dict().keys()[k].numel() == v.numel}
+            else:
+                sd = {k: v for k, v in sd.items() if 'fc' not in k}
+
         if args.modality == 'Flow' and 'Flow' not in args.tune_from:
             sd = {k: v for k, v in sd.items() if 'conv1.weight' not in k}
         model_dict.update(sd)
-        model.load_state_dict(model_dict)
+        if args.arch == "mobilenetv2":
+            model.module.load_state_dict(model_dict)
+        else:
+            model.load_state_dict(model_dict)
 
     if args.temporal_pool and not args.resume:
         make_temporal_pool(model.module.base_model, args.num_segments)
