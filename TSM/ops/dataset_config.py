@@ -5,15 +5,15 @@
 
 import os
 
-ROOT_DATASET = '/TSM/data'  # '/data/jilin/'
+ROOT_DATASET = 'C:/Code/Gesture_Vision/TSM/data'  # '/data/jilin/'
 
 
 def return_ucf101(modality):
-    filename_categories = 'TSM/data/label/classInd.txt'
+    filename_categories = 'C:/Code/Gesture_Vision/TSM/data/label/classInd.txt'
     if modality == 'RGB':
         root_data = ROOT_DATASET + '/img'
-        filename_imglist_train = 'TSM/data/label/train_split.txt'
-        filename_imglist_val = 'TSM/data/label/val_split.txt'
+        filename_imglist_train = 'C:/Code/Gesture_Vision/TSM/data/label/train_split.txt'
+        filename_imglist_val = 'C:/Code/Gesture_Vision/TSM/data/label/val_split.txt'
         prefix = 'image_{:05d}.jpg'
     elif modality == 'Flow':
         root_data = ROOT_DATASET + 'UCF101/jpg'
