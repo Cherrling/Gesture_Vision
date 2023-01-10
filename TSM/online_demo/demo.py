@@ -7,6 +7,7 @@ import torch
 from online_demo.mobilenet_v2_tsm import MobileNetV2
 import cv2
 import numpy as np
+from ops.models import TSN
 import torchvision
 from PIL import Image
 import time
@@ -220,10 +221,59 @@ WINDOW_NAME = 'Video Gesture Recognition'
 
 def main():
 
-    torch_module = MobileNetV2(n_class=27)
-    torch_module.load_state_dict(torch.load(r"C:\Code\Gesture_Vision\TSM\checkpoint\100.best.pth"))   # 加载模型，路径自己修改
+    # torch_module = MobileNetV2(n_class=27)
+    # torch_module.load_state_dict(torch.load(r"C:\Code\Gesture_Vision\TSM\online_demo\mobilenetv2_jester_online.pth.tar"))   # 加载模型，路径自己修改
 
+    # torch_module.eval()
+    
+
+    arch = 'mobilenetv2'
+    # arch = 'resnet50'
+    num_class = 100
+    num_segments = 8
+    modality = 'RGB'
+    base_model = 'mobilenetv2'
+    # base_model = 'resnet50'
+    consensus_type='avg'
+    dataset = 'ucf101'
+    dropout = 0.1
+    img_feature_dim = 256
+    no_partialbn = True
+    pretrain = 'imagenet'
+    shift = True
+    shift_div = 8
+    shift_place = 'blockres'
+    temporal_pool = False
+    non_local = False
+    tune_from = None
+
+
+    #load model
+    torch_module = TSN(num_class, num_segments, modality,
+                    base_model=arch,
+                    consensus_type=consensus_type,
+                    dropout=dropout,
+                    img_feature_dim=img_feature_dim,
+                    partial_bn=not no_partialbn,
+                    pretrain=pretrain,
+                    is_shift=shift, shift_div=shift_div, shift_place=shift_place,
+                    fc_lr5=not (tune_from and dataset in tune_from),
+                    temporal_pool=temporal_pool,
+                    non_local=non_local)
+
+
+
+    torch_module = torch.nn.DataParallel(torch_module, device_ids=None).cuda()
+    resume = 'C:/Code/Gesture_Vision/TSM/checkpoint/mobilenet.best.pth.tar' #  the last weights
+    # resume = 'C:/Code/Gesture_Vision/TSM/checkpoint/100.best.pth' #  the last weights
+    checkpoint = torch.load(resume)
+    torch_module.load_state_dict(checkpoint['state_dict'])
     torch_module.eval()
+
+    
+
+
+
 
     print("Open camera...")
     cap = cv2.VideoCapture(0)  # 打开摄像头
