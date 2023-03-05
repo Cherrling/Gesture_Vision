@@ -1,7 +1,4 @@
-"""
-Created on 2023-01-07 23:42
-@author: wateryear
-"""
+
 import os
 import time
 from ops.models import TSN
@@ -58,6 +55,11 @@ temporal_pool = False
 non_local = False
 tune_from = None
 
+
+
+video_path = r'C:\Code\Gesture_Vision\TSM\data\diqiushixingxing.mp4'
+video_path = r'C:\Code\Gesture_Vision\TSM\data\tatongxueshijingcha.mp4'
+
 model = TSN(num_class, num_segments, modality,
                 base_model=arch,
                 consensus_type=consensus_type,
@@ -71,11 +73,12 @@ model = TSN(num_class, num_segments, modality,
                 non_local=non_local)
 
 model = torch.nn.DataParallel(model, device_ids=None).to(device)
+# resume = r'C:\Code\Gesture_Vision\TSM\checkpoint\500_e50.tar'
 resume = r'C:\Code\Gesture_Vision\TSM\checkpoint\100.best.pth'
 checkpoint = torch.load(resume,map_location='cpu')
 model.load_state_dict(checkpoint['state_dict'])
-
 model.eval()
+
 input_mean = [0.485, 0.456, 0.406]
 input_std = [0.229, 0.224, 0.225]
 normalize = GroupNormalize(input_mean, input_std)
@@ -87,7 +90,10 @@ transform_hyj = torchvision.transforms.Compose([
     normalize,
 ])
 
-video_path = r'D:\BaiduNetdiskDownload\Gesture_data\SLR_dataset\color\000005\244.avi'
+
+
+state=-1
+
 # 存放切分后的视频
 pil_img_list = list()
 cap = cv2.VideoCapture(video_path)
@@ -112,64 +118,38 @@ state = output_index
 print("out", output_index)
 
 
+# ----------
+exit()
 
+cap = cv2.VideoCapture(video_path)
+start_time = time.time()
+counter = 0
+frame_numbers = 0
+fps = cap.get(cv2.CAP_PROP_FPS)
+if fps < 1:
+    fps = 30
 
-# pil_img_list = list()
-#
-# cls_text = ['nofight','fight']
-# cls_color = [(0,255,0),(0,0,255)]
-#
-# import time
-#
-# cap = cv2.VideoCapture(video_path)
-# start_time = time.time()
-# counter = 0
-# frame_numbers = 0
-# training_fps = 30
-# training_time = 2.5
-# fps = cap.get(cv2.CAP_PROP_FPS)
-# if fps < 1:
-#     fps = 30
-# duaring = int(fps * training_time / num_segments)
-# print(duaring)
-#
-# state = 0
-# while cap.isOpened():
-#     ret, frame = cap.read()
-#     if ret:
-#         frame_numbers+=1
-#         print(frame_numbers)
-#
-#         if frame_numbers%duaring == 0 and len(pil_img_list)<8:
-#             frame_pil = Image.fromarray(cv2.cvtColor(frame,cv2.COLOR_BGR2RGB))
-#             pil_img_list.extend([frame_pil])
-#         if frame_numbers%duaring == 0 and  len(pil_img_list)==8:
-#             frame_pil = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-#             pil_img_list.pop(0)
-#             pil_img_list.extend([frame_pil])
-#             input = transform_hyj(pil_img_list)
-#             input = input.unsqueeze(0).cuda()
-#             out = model(input)
-#             output_index = int(torch.argmax(out).cpu())
-#             print("out", output_index)
-#             state = output_index
-#
-#         key = cv2.waitKey(1) & 0xff
-#         if key == ord(" "):
-#             cv2.waitKey(0)
-#         if key == ord("q"):
-#             break
-#         counter += 1
-#         if (time.time() - start_time) != 0:
-#             # cv2.putText(frame, "{0} {1}".format((cls_text[state]),float('%.1f' % (counter / (time.time() - start_time)))), (50, 50),cv2.FONT_HERSHEY_SIMPLEX, 2, cls_color[state],3)
-#             cv2.imshow('frame', frame)
-#
-#             counter = 0
-#             start_time = time.time()
-#         time.sleep(1 / fps)
-#
-#     else:
-#         break
-#
-# cap.release()
-# cv2.destroyAllWindows()
+while cap.isOpened():
+    ret, frame = cap.read()
+    if ret:
+        frame_numbers+=1
+        print(frame_numbers)
+        key = cv2.waitKey(1) & 0xff
+        if key == ord(" "):
+            cv2.waitKey(0)
+        if key == ord("q"):
+            break
+        counter += 1
+        if (time.time() - start_time) != 0:
+            cv2.putText(frame, "{0} {1}".format((state),float('%.1f' % (counter / (time.time() - start_time)))), (50, 50),cv2.FONT_HERSHEY_SIMPLEX, 2, (0,255,0),3)
+            cv2.imshow('frame', frame)
+
+            counter = 0
+            start_time = time.time()
+        time.sleep(1 / fps)
+
+    else:
+        break
+
+cap.release()
+cv2.destroyAllWindows()
