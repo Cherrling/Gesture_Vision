@@ -1,0 +1,43 @@
+1. 如何处理文件夹[句子]中的压缩数据？
+a. 下载它的分裂的文件。
+    1- 下载 csl-daily-frames-512x512.tar.gz_00 ---- csl-daily-frames-512x512.tar.gz_09 
+    2- 在Ubuntu上猫这些文件。
+        cat csl-daily-frames-512x512.tar.gz_* > csl-daily-frames-512x512.tar.gz
+c. 提取文件
+    tar -xvzf csl-daily-frames-512x512.tar.gz
+
+2. 如何读取注释文件？
+输入pickle
+with open('csl2020ct_v2.pkl', 'rb') as f:
+    data = pickle.load(f)
+print(data.keys())
+print(data['info'][0])
+
+3. 上述文件中的键值是什么意思？
+info：所有的注释
+    name：视频名称
+    length：视频中的帧数
+    label_gloss：存储在[List]中的gloss序列，用于手语识别
+    label_char：存储在[List]中的char序列，用于手语翻译。在我们的实验中，我们将其作为SLT目标。
+    label_word：存储在[List]中的单词序列，用于手语翻译。仅供参考。
+    signer: 某个手语者的ID。它从0开始。
+    time: 同一手语者执行同一句子的次数。它从0开始。实际上，没有一个手语者会表演同一个句子两次。
+gloss_map: 词汇表。
+char_map: 字符的词汇表。
+word_map: 词语的词汇表
+
+4. 4.train/dev/test的分割在哪里？
+在'split_1.txt'中
+
+5. 如何理解中文句子的含义？
+比如说 
+    输入pickle
+    with open('csl2020ct_v1.pkl', 'rb') as f:
+        data = pickle.load(f)
+    print(''.join(data['info'][1000]['label_char']))
+你会看到'下个星期一上班。
+然后你可以用google来翻译它。我们将考虑在未来增加英文翻译。
+
+
+
+通过www.DeepL.com/Translator（免费版）翻译

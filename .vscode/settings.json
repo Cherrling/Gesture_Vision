@@ -11,5 +11,7 @@
         "*test.py"
     ],
     "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.testing.unittestEnabled": true,
+    "liveServer.settings.port": 5501,
+    "C_Cpp.errorSquiggles": "enabled"
 }

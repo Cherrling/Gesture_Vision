@@ -6,13 +6,13 @@ from ops.transforms import *
 import cv2
 from PIL import Image
 
-arch = 'mobilenetv2'
-# arch = 'resnet50'
+# arch = 'mobilenetv2'
+arch = 'resnet50'
 num_class = 100
 num_segments = 8
 modality = 'RGB'
-base_model = 'mobilenetv2'
-# base_model = 'resnet50'
+# base_model = 'mobilenetv2'
+base_model = 'resnet50'
 consensus_type='avg'
 dataset = 'ucf101'
 dropout = 0.1
@@ -43,7 +43,7 @@ model = TSN(num_class, num_segments, modality,
 
 
 model = torch.nn.DataParallel(model, device_ids=None).cuda()
-resume = 'C:/Code/Gesture_Vision/TSM/checkpoint/mobilenet.best.pth.tar' #  the last weights
+resume = 'C:\Code\Gesture_Vision\TSM\checkpoint/100.best.pth' #  the last weights
 # resume = 'C:/Code/Gesture_Vision/TSM/checkpoint/100.best.pth' #  the last weights
 checkpoint = torch.load(resume)
 model.load_state_dict(checkpoint['state_dict'])

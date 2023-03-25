@@ -5,3 +5,5 @@ TSM/pretrained
 TSM/checkpoint
 checkpoint
 TSM/data
+generate/generated_videos
+generate/lightning_logs
